@@ -16,9 +16,15 @@ const KEY = '15674931-a9d714b6e9d654524df198e00&q';
 
 // show images 
 const showImages = (images) => {
+  // Clear input field
   search.value = "";
+
+  // Show loading spinner
   displaySpinner();
+  
+  // Check If it is not found any image
   if(images.length < 1){
+    imagesArea.style.display = 'none';
     document.getElementById("no-img-found").classList.remove("d-none");
   }
   else{
@@ -38,6 +44,7 @@ const showImages = (images) => {
 }
 
 const getImages = (query) => {
+  // imagesArea.style.display = 'block';
   displaySpinner()
   fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
@@ -50,6 +57,7 @@ const selectItem = (event, img) => {
   let element = event.target;
   ;
  
+  // select item and deselect and update slider length
   let item = sliders.indexOf(img);
   if (item === -1) {
     element.classList.toggle("added")
@@ -57,24 +65,19 @@ const selectItem = (event, img) => {
   } else {
     element.classList.toggle("added")
     sliders.splice(item,1);
-
-   // alert('Hey, Already added !')
   }
 }
-var timer
+let  timer;
 const createSlider = () => {
   // check slider image length
   if (sliders.length < 2) {
     alert('Select at least 2 image.')
     return;
   }
-  const mainDiv = document.querySelector(".main");
+
   // crate slider previous next area
   sliderContainer.innerHTML = '';
   const prevNext = document.createElement('div');
-  const backBtn = document.createElement("button");
-  backBtn.innerText = "Back to gallery";
-  backBtn.className = "back-btn"
   prevNext.className = "prev-next d-flex w-100 justify-content-between align-items-center";
   prevNext.innerHTML = ` 
   <span class="prev" onclick="changeItem(-1)"><i class="fas fa-chevron-left"></i></span>
@@ -83,26 +86,15 @@ const createSlider = () => {
   `;
 
   sliderContainer.appendChild(prevNext);
-  mainDiv.appendChild(backBtn);
-
-// Back to image gallery 
-  backBtn.addEventListener("click",function(){
-    // const imgDiv = document.querySelectorAll("#sliders div");
-    // imgDiv.forEach(div => {
-    //   div.classList.remove("added");
-    // })
-    //console.log(imgDiv);
-    imagesArea.style.display = 'block';
-  document.querySelector('.main').style.display = 'none';
-
-  })
-
 
   document.querySelector('.main').style.display = 'block';
   // hide image aria
   imagesArea.style.display = 'none';
+
   let duration;
-  const durationText = document.getElementById('duration-field').value 
+  const durationText = document.getElementById('duration-field').value;
+
+  // If negative value is inserted, Ignore it and convert to positive value;
   if(durationText < 0){
     duration = 1000;
 
@@ -130,6 +122,7 @@ const changeItem = index => {
   changeSlide(slideIndex += index);
 }
 
+
 // change slide item
 const changeSlide = (index) => {
 
@@ -151,27 +144,44 @@ const changeSlide = (index) => {
   items[index].style.display = "block"
 }
 
+// search images on click button
 searchBtn.addEventListener('click', function () {
   document.querySelector('.main').style.display = 'none';
+  document.getElementById("no-img-found").classList.add("d-none");
+  imagesArea.style.display = 'none';
   document.getElementById("image-container").innerHTML = "";
   clearInterval(timer);
   getImages(search.value);
   sliders.length = 0;
 });
 
+
 // search by pressing Enter key
 search.addEventListener("keypress",function(e){
   
-  if(e.key == "Enter"){
+  if(e.key === "Enter"){
     e.preventDefault()
     searchBtn.click()
   }
 })
 
+// Create slider on click button
 sliderBtn.addEventListener('click', function () {
   createSlider()
+});
+
+
+// Create slider by pressing Enter key
+document.getElementById("duration-field").addEventListener("keypress",function(e){
+  if(e.key === "Enter"){
+    e.preventDefault()
+    sliderBtn.click()
+  }
+
 })
 
+
+// Display spinner
 const displaySpinner = ()=>{
   const spinnerContainer = document.getElementById("loading-spinner");
   spinnerContainer.classList.toggle("d-none");
