@@ -44,7 +44,7 @@ const showImages = (images) => {
 }
 
 const getImages = (query) => {
-  // imagesArea.style.display = 'block';
+
   displaySpinner()
   fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
